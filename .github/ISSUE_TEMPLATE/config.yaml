@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentação do App
+    url: https://github.com/seu-usuario/seu-repo/wiki
+    about: Consulte nossa documentação antes de abrir uma issue
+  - name: Comunidade no Discord
+    url: https://discord.gg/seu-link
+    about: Tire dúvidas com a comunidade sobre o app Flutter
+  - name: Reportar problema de segurança
+    url: https://github.com/seu-usuario/seu-repo/security/policy
+    about: Por favor, reporte problemas de segurança aqui
