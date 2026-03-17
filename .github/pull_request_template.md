@@ -13,7 +13,8 @@ Descreva brevemente o que este PR implementa no app Flutter
 - [ ] iOS
 - [ ] Android
 - [ ] Web (se aplicável)
-
+- [ ] Não se aplica
+ 
 
 ## ✅ Checklist
 - [ ] Meu código segue o padrão do projeto (dart format)
