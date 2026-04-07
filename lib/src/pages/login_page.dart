@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
+import '../services/login_service.dart';
 import '../widgets/app_logo.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,6 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _loginService = LoginService();
 
   bool _isLoading = false;
 
@@ -33,60 +32,28 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await http.post(
-        Uri.parse('http://localhost:3000/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': _emailController.text.trim(),
-          'password_hash': _passwordController.text,
-        }),
+      final result = await _loginService.login(
+        email: _emailController.text,
+        password: _passwordController.text,
       );
-
-      final Map<String, dynamic> data = response.body.isNotEmpty
-          ? jsonDecode(response.body) as Map<String, dynamic>
-          : {};
 
       if (!mounted) return;
 
-      switch (response.statusCode) {
-        case 200:
-          final token = data['token']?.toString() ?? '';
-          final message =
-              data['message']?.toString() ?? 'Login realizado com sucesso.';
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message)),
-          );
-
-          Navigator.pushReplacementNamed(
-            context,
-            '/main',
-            arguments: token,
-          );
-          break;
-
-        case 401:
-          _showError(
-              data['message']?.toString() ??
-                  'Senha incorreta.',
-            );
-        case 404:
-        case 409:
-        case 500:
-          _showError(
-            data['message']?.toString() ??
-                'Não foi possível realizar o login.',
-          );
-          break;
-
-        default:
-          _showError('Erro inesperado: ${response.statusCode}.');
-      }
-    } catch (e) {
-      if (!mounted) return;
-      _showError(
-        'Erro de conexão ao tentar acessar a API. Se estiver usando emulador Android, troque localhost por 10.0.2.2.',
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result.message)),
       );
+
+      Navigator.pushReplacementNamed(
+        context,
+        '/main',
+        arguments: result.token,
+      );
+    } on LoginException catch (e) {
+      if (!mounted) return;
+      _showError(e.message);
+    } catch (_) {
+      if (!mounted) return;
+      _showError('Não foi possível realizar o login.');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
