@@ -7,10 +7,25 @@ class BanksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final banks = const [
-      BankAccountData(name: 'NuBank', account: 'Cc: 00000', agency: 'Ag: 00000-0', balance: 'R\$ 2.350,00', color: Color(0xFFF2C300)),
-      BankAccountData(name: 'Inter', account: 'Cc: 00001', agency: 'Ag: 00000-1', balance: 'R\$ 5.780,90', color: Color(0xFF5C4DB1)),
-      BankAccountData(name: 'Mercado Pago', account: 'Cc: 00002', agency: 'Ag: 00000-2', balance: 'R\$ 980,00', color: Color(0xFF53B6F0)),
+    final List<BankAccountData> banks = const [
+      BankAccountData(
+          name: 'NuBank',
+          account: 'Cc: 00000',
+          agency: 'Ag: 00000-0',
+          balance: 'R\$ 2.350,00',
+          color: Color(0xFFF2C300)),
+      BankAccountData(
+          name: 'Inter',
+          account: 'Cc: 00001',
+          agency: 'Ag: 00000-1',
+          balance: 'R\$ 5.780,90',
+          color: Color(0xFF5C4DB1)),
+      BankAccountData(
+          name: 'Mercado Pago',
+          account: 'Cc: 00002',
+          agency: 'Ag: 00000-2',
+          balance: 'R\$ 980,00',
+          color: Color(0xFF53B6F0)),
     ];
 
     return Scaffold(
