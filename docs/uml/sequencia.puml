@@ -1,39 +1,170 @@
-@startuml fluxo_alternativo_registrar_transacao
- title Fluxo de Registrar Transação com Fluxos Alternativos
+@startuml
+title Fluxo de Ponta a Ponta do Sistema
 
-actor Usuario
-participant "TransacaoView" as View
-participant "TransacaoPresenter" as Presenter
-participant "TransacaoModel/Service" as Model
-participant "Repository" as Repo
+actor Cliente
 
-Usuario -> View: Acessa nova transação
-View -> Presenter: solicitarFormulario()
-Presenter -> View: exibirFormulario()
+participant UserController as UC
+participant UserService as US
+participant UserRepository as UR
 
-Usuario -> View: informa tipo, valor, data e descrição
-View -> Presenter: salvarTransacao(dados)
-Presenter -> Model: validarDados(dados)
+participant AccountController as AC
+participant AccountService as AS
+participant AccountRepository as AR
 
-alt Campos obrigatórios ausentes
-  Model --> Presenter: erro de validação
-  Presenter -> View: exibirMensagem("Preencha os campos obrigatórios")
-else Valor menor ou igual a zero
-  Model --> Presenter: erro de regra de negócio
-  Presenter -> View: exibirMensagem("O valor deve ser maior que zero")
-else Dados válidos
-  Presenter -> Model: associarAoUsuario()
-  Presenter -> Repo: salvar(dados)
+participant TransactorController as TC
+participant TransactorService as TS
+participant TransactorRepository as TR
 
-  alt Falha ao persistir
-    Repo --> Presenter: erro de persistência
-    Presenter -> View: exibirMensagem("Não foi possível registrar a transação")
-  else Persistência realizada
-    Repo --> Presenter: sucesso
-    Presenter -> Model: recalcularSaldo()
-    Model --> Presenter: saldoAtualizado
-    Presenter -> View: exibirSucesso()
-    Presenter -> View: atualizarResumoFinanceiro()
+participant FinancialMovementController as FMC
+participant FinancialMovementService as FMS
+participant FinancialMovementRepository as FMR
+
+participant JWT
+
+database Users as UDB
+database Accounts as ADB
+database Transactors as TDB
+database FinancialMovements as FMDB
+
+autonumber
+
+== 1. Cadastro de Usuário ==
+
+Cliente -> UC: POST /users
+UC -> US: createUser(body)
+US -> UR: findByEmail(email)
+UR -> UDB: SELECT * FROM Users WHERE email = ?
+UDB --> UR: usuário | null
+UR --> US: usuário | null
+
+alt E-mail já existe
+  US --> UC: AppError 409
+  UC --> Cliente: HTTP 409
+else E-mail não existe
+  US -> US: bcrypt.hash(password_hash, 10)
+  US -> US: uuidv4()
+  US -> UR: create(user)
+  UR -> UDB: INSERT INTO Users
+  UDB --> UR: ok
+  UR --> US: ok
+  US --> UC: ok
+  UC --> Cliente: HTTP 201
+end
+
+== 2. Login ==
+
+Cliente -> UC: POST /login
+UC -> US: login(body)
+US -> UR: findByEmail(email)
+UR -> UDB: SELECT user by email
+UDB --> UR: user | null
+UR --> US: user | null
+
+alt Usuário não encontrado
+  US --> UC: AppError 404
+  UC --> Cliente: HTTP 404
+else Usuário encontrado
+  US -> US: comparar senha
+  alt Senha inválida
+    US --> UC: AppError 401
+    UC --> Cliente: HTTP 401
+  else Senha válida
+    US -> JWT: sign(userData)
+    JWT --> US: token
+    US --> UC: token
+    UC --> Cliente: HTTP 200 + token
   end
 end
+
+== 3. Criar Conta ==
+
+Cliente -> AC: POST /accounts
+AC -> AS: createAccount(body)
+AS -> AS: validateBusinessRules(data)
+
+alt Dados inválidos
+  AS --> AC: AppError 400
+  AC --> Cliente: HTTP 400
+else Dados válidos
+  AS -> AS: trim descrição
+  AS -> AR: create(payload)
+  AR -> ADB: INSERT account
+  ADB --> AR: ok
+  AR --> AS: ok
+  AS --> AC: ok
+  AC --> Cliente: HTTP 201
+end
+
+== 4. Criar Transactor ==
+
+Cliente -> TC: POST /transactors
+TC -> TS: createTransactor(body)
+TS -> TR: findUserById(user_id)
+TR -> UDB: SELECT id_user, active
+UDB --> TR: user | null
+TR --> TS: user | null
+
+alt Usuário não encontrado
+  TS --> TC: AppError 404
+  TC --> Cliente: HTTP 404
+else Usuário encontrado
+  alt Usuário inativo
+    TS --> TC: AppError 409
+    TC --> Cliente: HTTP 409
+  else Usuário ativo
+    TS -> TR: create(data)
+    TR -> TDB: INSERT transactor
+    TDB --> TR: ok
+    TR --> TS: ok
+    TS --> TC: ok
+    TC --> Cliente: HTTP 201
+  end
+end
+
+== 5. Criar Movimento Financeiro ==
+
+Cliente -> FMC: POST /financial-movements
+FMC -> FMS: createFinancialMovement(body)
+FMS -> FMS: validateBusinessRules(data)
+
+alt Regras inválidas
+  FMS --> FMC: AppError 400
+  FMC --> Cliente: HTTP 400
+else Regras válidas
+  FMS -> FMS: montar payload
+
+  alt type_movement_id == 1
+    FMS -> AR: deposit(account_id, value)
+    AR -> ADB: increment balance
+    ADB --> AR: ok
+    AR --> FMS: ok
+  else outro tipo
+    FMS -> AR: withdraw(account_id, value)
+    AR -> ADB: decrement balance
+    ADB --> AR: ok
+    AR --> FMS: ok
+  end
+
+  FMS -> FMR: create(payload)
+  FMR -> FMDB: INSERT movement
+  FMDB --> FMR: ok
+  FMR --> FMS: ok
+  FMS --> FMC: ok
+  FMC --> Cliente: HTTP 201
+end
+
+== 6. Consultar Movimentos do Usuário ==
+
+Cliente -> FMC: GET /user-financial-movements
+FMC -> FMC: extrair token
+FMC -> JWT: verify(token)
+JWT --> FMC: payload com id_user
+FMC -> FMS: getFinancialMovementsByUserId(id_user)
+FMS -> FMR: getFinancialMovementsByUserId(id_user)
+FMR -> FMDB: SELECT ... WHERE user_id = id_user
+FMDB --> FMR: lista
+FMR --> FMS: lista
+FMS --> FMC: lista
+FMC --> Cliente: HTTP 200
+
 @enduml
