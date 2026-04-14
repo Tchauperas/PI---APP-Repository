@@ -1,0 +1,134 @@
+@startuml
+title Fluxo Geral do Projeto
+
+start
+
+:Cliente acessa o sistema;
+
+:Enviar POST /users;
+:UserController.createUser();
+:UserService.createUser(data);
+:Buscar usuário por e-mail;
+
+if (E-mail já cadastrado?) then (Sim)
+  :Retornar 409\nE-mail já cadastrado;
+  stop
+else (Não)
+  :Gerar hash da senha;
+  :Gerar UUID do usuário;
+  :Persistir usuário no banco;
+  :Retornar 201\nUsuário criado com sucesso;
+endif
+
+:Enviar POST /login;
+:UserController.login();
+:UserService.login(data);
+:Buscar usuário por e-mail;
+
+if (Usuário encontrado?) then (Não)
+  :Retornar 404\nUsuário não encontrado;
+  stop
+else (Sim)
+  :Comparar senha com hash;
+  if (Senha válida?) then (Não)
+    :Retornar 401\nSenha incorreta;
+    stop
+  else (Sim)
+    :Gerar JWT;
+    :Retornar 200 com token;
+  endif
+endif
+
+:Enviar POST /accounts;
+:AccountController.createAccount();
+:AccountService.createAccount(data);
+
+if (Descrição válida?) then (Não)
+  :Retornar 400\nDescrição obrigatória;
+  stop
+else (Sim)
+endif
+
+if (Saldo negativo?) then (Sim)
+  :Retornar 400\nSaldo não pode ser negativo;
+  stop
+else (Não)
+  :Aplicar trim na descrição;
+  :Persistir conta;
+  :Retornar 201\nConta criada com sucesso;
+endif
+
+:Enviar POST /transactors;
+:TransactorController.createTransactor();
+:TransactorService.createTransactor(data);
+:Buscar usuário por user_id;
+
+if (Usuário existe?) then (Não)
+  :Retornar 404\nUsuário não encontrado;
+  stop
+else (Sim)
+endif
+
+if (Usuário ativo?) then (Não)
+  :Retornar 409\nUsuário inativo;
+  stop
+else (Sim)
+  :Persistir transactor;
+  :Retornar 201\nTransactor criado com sucesso;
+endif
+
+:Enviar POST /financial-movements;
+:FinancialMovementController.createFinancialMovement();
+:FinancialMovementService.createFinancialMovement(data);
+
+if (Valor > 0?) then (Não)
+  :Retornar 400\nValor inválido;
+  stop
+else (Sim)
+endif
+
+:Validar movement_date;
+:Validar due_date;
+
+if (due_date < movement_date?) then (Sim)
+  :Retornar 400\nVencimento menor que movimentação;
+  stop
+else (Não)
+endif
+
+if (Existe payment_date?) then (Sim)
+  :Validar payment_date;
+  if (payment_method_id informado?) then (Não)
+    :Retornar 400\nForma de pagamento obrigatória;
+    stop
+  else (Sim)
+  endif
+else (Não)
+endif
+
+:Montar payload;
+
+if (type_movement_id == 1?) then (Sim)
+  :Depositar valor na conta;
+else (Não)
+  :Sacar valor da conta;
+endif
+
+:Persistir movimento financeiro;
+:Retornar 201\nMovimento criado com sucesso;
+
+:Enviar GET /user-financial-movements;
+
+if (Authorization informado?) then (Não)
+  :Retornar 401\nUsuário não autenticado;
+  stop
+else (Sim)
+  :Extrair token;
+  :Validar JWT;
+  :Obter id_user;
+  :Buscar movimentos por user_id;
+  :Retornar 200 com lista;
+endif
+
+stop
+@enduml
