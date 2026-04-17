@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 
 import '../widgets/custom_bottom_navigation_bar.dart';
 import 'add_transaction_page.dart';
@@ -36,3 +37,9 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 }
+@Preview(name: 'Login Page Preview')
+Widget previewMainNavigation() {
+  return const MaterialApp(
+    home: MainNavigation(),
+  );
+} 

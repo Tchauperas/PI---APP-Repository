@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 
 import '../services/login_service.dart';
 import '../widgets/app_logo.dart';
@@ -208,3 +209,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+@Preview(name: 'Login Page Preview')
+Widget previewLoginPage() {
+  return const MaterialApp(
+    home: LoginPage(),
+  );
+} 
