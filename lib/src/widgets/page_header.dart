@@ -25,7 +25,12 @@ class PageHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          if (showLogo) const AppLogo(),
+          if (showLogo)
+            InkWell(
+              onTap: () => Navigator.pushReplacementNamed(context, '/'),
+              child: const AppLogo(),
+              )
+            ,
           if (showLogo) const SizedBox(width: 12),
           Expanded(
             child: Text(
