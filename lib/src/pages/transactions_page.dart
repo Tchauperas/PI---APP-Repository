@@ -1,6 +1,5 @@
+import 'package:finansme_flutter/src/widgets/page_header.dart';
 import 'package:flutter/material.dart';
-
-import '../widgets/page_header.dart';
 import '../widgets/transaction_tile.dart';
 import '../widgets/transactions_filter_bar.dart';
 
@@ -17,17 +16,10 @@ class TransactionsPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF5B1FA6),
-        foregroundColor: Colors.white,
-        title: const Text('Transações', style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.tune)),
-        ],
-      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const PageHeader(title: "Transações", showLogo: true,),
           const TransactionsFilterBar(),
           Expanded(
             child: ListView.builder(

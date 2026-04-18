@@ -7,7 +7,7 @@ class BanksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<BankAccountData> banks = const [
+    final List<BankAccountData> banks = [
       BankAccountData(
           name: 'NuBank',
           account: 'Cc: 00000',
