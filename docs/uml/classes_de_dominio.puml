@@ -1,0 +1,77 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+title Diagrama de Classes de Domínio - FinansMe
+
+class Usuario {
+  -id: UUID
+  -nome: String
+  -email: String
+  -senha: String
+  -ativo: Boolean
+
+  -cadastrar()
+  -login()
+}
+
+class Conta {
+  -id: Long
+  -descricao: String
+  -valorTotal: Decimal
+
+  -sacar()
+  -depositar()
+}
+
+class PlanoConta {
+  -id: Long
+  -descricao: String
+}
+
+class Transator {
+  -id: Long
+  -descricao: String
+}
+
+class SituacaoFinanceira {
+  -id: Long
+  -descricao: String
+}
+
+class TipoMovimento {
+  -id: Long
+  -descricao: String
+}
+
+class FormaPagamento {
+  -id: Long
+  -descricao: String
+}
+
+class MovimentoFinanceiro {
+  -id: Long
+  -dataMovimentacao: Date
+  -dataVencimento: Date
+  -dataPagamento: Date
+  -numeroDocumento: String
+  -valor: Decimal
+  -descricao: String
+
+  -lancar()
+  -quitar()
+  -receber()
+}
+
+Usuario "1" -- "0..*" Conta : possui
+Usuario "1" -- "0..*" PlanoConta : possui
+Usuario "1" -- "0..*" Transator : possui
+Usuario "1" -- "0..*" MovimentoFinanceiro : registra
+
+Conta "1" -- "0..*" MovimentoFinanceiro : utilizada em
+PlanoConta "1" -- "0..*" MovimentoFinanceiro : classifica
+Transator "1" -- "0..*" MovimentoFinanceiro : relacionado a
+SituacaoFinanceira "1" -- "0..*" MovimentoFinanceiro : define status
+TipoMovimento "1" -- "0..*" MovimentoFinanceiro : define tipo
+FormaPagamento "1" -- "0..*" MovimentoFinanceiro : define pagamento
+
+@enduml
