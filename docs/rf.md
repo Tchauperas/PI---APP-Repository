@@ -1,62 +1,43 @@
-# Requisitos Funcionais – FinansMe
+# Requisitos do Sistema — FinansMe
 
-Os requisitos funcionais descrevem as funcionalidades que o sistema deve oferecer ao usuário.
+## Requisitos Funcionais (RF)
 
----
+### RF01 — Cadastro de usuário
 
-## RF01 – Cadastro de Usuário
+O sistema deve permitir que o usuário realize seu cadastro informando nome, e-mail e senha.
 
-O sistema deve permitir que novos usuários realizem cadastro na plataforma.
+### RF02 — Login de usuário
 
----
+O sistema deve permitir que o usuário realize login com e-mail e senha.
 
-## RF02 – Autenticação de Usuário
+### RF03 — Recuperação de senha
 
-O sistema deve permitir que usuários realizem login utilizando e-mail e senha.
+O sistema deve permitir que o usuário solicite a recuperação de senha por e-mail.
 
----
+### RF04 — Atualização de perfil
 
-## RF03 – Registro de Transações
+O sistema deve permitir que o usuário altere seus dados cadastrais, como nome, foto e informações pessoais.
 
-O sistema deve permitir que o usuário registre novas transações financeiras.
+### RF05 — Cadastro de contas financeiras
 
-As transações podem representar:
+O sistema deve permitir que o usuário cadastre contas financeiras, como banco, carteira ou outra fonte de saldo.
 
-- Receitas
-- Despesas
+### RF06 — Cadastro de planos de conta
 
----
+O sistema deve permitir que o usuário cadastre planos de conta para categorizar receitas e despesas.
 
-## RF04 – Visualização de Histórico
+### RF07 — Cadastro de transatores
 
-O sistema deve permitir que o usuário visualize o histórico completo de suas transações.
+O sistema deve permitir que o usuário cadastre transatores vinculados aos lançamentos financeiros.
 
----
+### RF08 — Registro de movimentações financeiras
 
-## RF05 – Classificação de Transações
+O sistema deve permitir que o usuário registre movimentações financeiras informando datas, valor, descrição e relacionamentos necessários.
 
-O sistema deve permitir que o usuário classifique as transações como receita ou despesa.
+### RF09 — Classificação dos lançamentos
 
----
+O sistema deve permitir que o usuário associe cada movimentação a um tipo de movimento, situação financeira e forma de pagamento.
 
-## RF06 – Visualização da Situação Financeira
+### RF10 — Consulta de movimentações
 
-O sistema deve apresentar um resumo financeiro ao usuário, consolidando receitas e despesas.
-
----
-
-## RF07 – Gerenciamento de Contas ou Bancos
-
-O sistema deve permitir que o usuário visualize e gerencie suas contas financeiras.
-
----
-
-## RF08 – Perfil do Usuário
-
-O sistema deve permitir que o usuário visualize e edite suas informações de perfil.
-
----
-
-## RF09 – Navegação entre Telas
-
-O sistema deve permitir navegação entre as principais telas do aplicativo.
+O sistema deve permitir que o usuário visualize a lista de movimentações financeiras cadastradas para acompanhamento da vida financeira.

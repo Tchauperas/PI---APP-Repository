@@ -1,53 +1,43 @@
-# Requisitos Não Funcionais – FinansMe
+# Requisitos do sistema - FinansMe
 
-Os requisitos não funcionais descrevem características de qualidade do sistema.
+## Requisitos Não Funcionais (RNF)
 
----
+### RNF01 — Desempenho
 
-## RNF01 – Desempenho
+O sistema deve carregar as telas principais em até 2 segundos em condições normais de uso.
 
-O sistema deve carregar suas telas principais em no máximo **2 segundos** após a solicitação do usuário.
+### RNF02 — Segurança de senhas
 
----
+O sistema deve armazenar as senhas utilizando algoritmo de hash seguro.
 
-## RNF02 – Usabilidade
+### RNF03 — Segurança na comunicação
 
-O sistema deve permitir que o usuário registre uma nova transação em no máximo **3 interações na interface**.
+O sistema deve utilizar comunicação segura via HTTPS entre aplicativo, API e banco de dados.
 
----
+### RNF04 — Disponibilidade
 
-## RNF03 – Segurança de Acesso
+O sistema deve estar disponível 24 horas por dia, exceto em períodos programados de manutenção.
 
-O sistema deve exigir autenticação por **login e senha** antes de permitir acesso aos dados financeiros.
+### RNF05 — Escalabilidade
 
----
+O sistema deve suportar crescimento de usuários e volume de dados sem perda significativa de desempenho.
 
-## RNF04 – Proteção de Dados
+### RNF06 — Usabilidade
 
-O sistema deve garantir que os dados dos usuários sejam transmitidos e armazenados de forma segura.
+O sistema deve possuir interface mobile intuitiva e de fácil navegação.
 
-Isso inclui:
+### RNF07 — Compatibilidade de plataforma
 
-- comunicação segura
-- proteção contra acesso não autorizado
+O sistema deve funcionar corretamente em dispositivos móveis compatíveis com a aplicação desenvolvida em Flutter.
 
----
+### RNF08 — Integridade dos dados
 
-## RNF05 – Integridade de Dados
+O sistema deve garantir consistência entre os dados cadastrados e seus relacionamentos no banco de dados.
 
-O sistema deve garantir que todas as transações registradas sejam armazenadas corretamente no banco de dados sem perda ou corrupção.
+### RNF09 — Manutenibilidade
 
----
+O sistema deve ser desenvolvido com arquitetura que facilite manutenção, evolução e correção de falhas.
 
-## RNF06 – Compatibilidade de Plataforma
+### RNF10 — Integração com API externa
 
-O aplicativo deve ser compatível com os sistemas operacionais:
-
-- Android
-- iOS
-
----
-
-## RNF07 – Confiabilidade
-
-O sistema deve operar de forma estável, evitando falhas que comprometam o registro ou acesso aos dados financeiros.
+O sistema deve ser capaz de integrar-se com API de Inteligência Artificial de forma estável e controlada.

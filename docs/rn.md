@@ -1,93 +1,43 @@
-# Regras de Negócio – FinansMe
+# Requisitos do sistema - FinansMe
 
-As regras de negócio definem as condições e restrições que devem ser respeitadas pelo sistema durante seu funcionamento. Elas garantem que os dados registrados sejam válidos e que o comportamento da aplicação esteja alinhado com o objetivo do sistema.
+## Regras de Negócio (RN)
 
----
+### RN01 — Unicidade do e-mail
 
-## RN01 – Autenticação Obrigatória
+Não deve ser permitido cadastrar mais de um usuário com o mesmo e-mail.
 
-O usuário deve estar autenticado no sistema para acessar qualquer funcionalidade relacionada às suas informações financeiras.
+### RN02 — Maioridade para cadastro
 
-Usuários não autenticados podem acessar apenas:
-- Tela de login
-- Tela de cadastro
+Para criar uma conta no sistema, o usuário deve possuir mais de 18 anos.
 
----
+### RN03 — Bloqueio por tentativas inválidas
 
-## RN02 – Registro de Transações
+Após 5 tentativas inválidas de login, a conta deve ser temporariamente bloqueada.
 
-Toda transação financeira registrada pelo usuário deve conter obrigatoriamente:
+### RN04 — Inativação por tempo sem uso
 
-- Tipo da transação (receita ou despesa)
-- Valor
-- Data
-- Descrição ou identificação da transação
+Usuários inativos por mais de 90 dias devem ser marcados como inativos.
 
-Caso alguma dessas informações esteja ausente, a transação não deve ser registrada.
+### RN05 — Relacionamento de conta com usuário
 
----
+Cada conta financeira deve pertencer obrigatoriamente a um único usuário.
 
-## RN03 – Valor da Transação
+### RN06 — Relacionamento de plano de conta com usuário
 
-O valor de uma transação deve ser maior que zero.
+Cada plano de conta deve estar vinculado obrigatoriamente a um único usuário.
 
-Valores iguais ou menores que zero não devem ser aceitos pelo sistema.
+### RN07 — Relacionamento de transator com usuário
 
----
+Cada transator deve estar vinculado obrigatoriamente a um único usuário.
 
-## RN04 – Classificação de Transações
+### RN08 — Obrigatoriedade de dados no lançamento
 
-Todas as transações devem ser classificadas como:
+Toda movimentação financeira deve possuir usuário, conta, plano de conta, tipo de movimento, valor e descrição informados.
 
-- Receita (entrada de dinheiro)
-- Despesa (saída de dinheiro)
+### RN09 — Coerência entre situação e pagamento
 
-Essa classificação será utilizada para cálculos de saldo e relatórios financeiros.
+Uma movimentação só pode ser marcada como quitada quando possuir data de pagamento registrada.
 
----
+### RN10 — Impacto no saldo da conta
 
-## RN05 – Associação de Transação ao Usuário
-
-Cada transação registrada deve estar associada exclusivamente ao usuário que a criou.
-
-Usuários não podem visualizar ou modificar transações de outros usuários.
-
----
-
-## RN06 – Cálculo do Saldo Financeiro
-
-O saldo financeiro do usuário deve ser calculado da seguinte forma:
-
-Saldo = Soma das receitas – Soma das despesas
-
-Esse saldo será apresentado na tela principal do aplicativo.
-
----
-
-## RN07 – Edição de Transações
-
-O usuário pode editar apenas as transações que ele próprio registrou.
-
-Após a edição, o sistema deve atualizar automaticamente o saldo financeiro do usuário.
-
----
-
-## RN08 – Exclusão de Transações
-
-O usuário pode excluir transações registradas.
-
-Após a exclusão, o sistema deve recalcular o saldo financeiro automaticamente.
-
----
-
-## RN09 – Persistência de Dados
-
-Todas as transações registradas devem ser armazenadas no banco de dados de forma permanente, garantindo que os dados permaneçam disponíveis mesmo após o encerramento da sessão do usuário.
-
----
-
-## RN10 – Integridade de Dados
-
-O sistema deve garantir que alterações realizadas em transações (edição ou exclusão) não causem inconsistências nos dados financeiros armazenados.
-
-Qualquer operação que falhe deve ser cancelada sem comprometer as informações existentes.
+Movimentações do tipo receita devem aumentar o valor total da conta, enquanto movimentações do tipo despesa devem reduzir o valor total da conta.
