@@ -1,4 +1,5 @@
-@startuml
+@startuml Diagrama de Classes de Domínio - FinansMe
+
 skinparam classAttributeIconSize 0
 
 title Diagrama de Classes de Domínio - FinansMe
