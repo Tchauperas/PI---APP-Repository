@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../widgets/page_header.dart';
 import '../widgets/bank_account_card.dart';
 
 class BanksPage extends StatelessWidget {
@@ -29,21 +29,19 @@ class BanksPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Contas'),
-        backgroundColor: const Color(0xFF5B1FA6),
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const PageHeader(title: "Bancos", showLogo: true,),
+          ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: banks.length,
+            itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: BankAccountCard(data: banks[index]),
+            ),
+          ),
         ],
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: banks.length,
-        itemBuilder: (context, index) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: BankAccountCard(data: banks[index]),
-        ),
       ),
     );
   }
