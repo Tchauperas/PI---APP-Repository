@@ -21,7 +21,7 @@ class FinancialMovementsService {
   Future<List<dynamic>> getFinancialMovements() async {
     try {
       final response = await http
-          .get(Uri.parse('$baseUrl/movimentos-financeiros'));
+          .get(Uri.parse('$baseUrl/financial-movements'));
 
       final data = response.body.isNotEmpty
           ? jsonDecode(response.body)
@@ -38,13 +38,40 @@ class FinancialMovementsService {
           'Connection error with API.');
     }
   }
+  
+  Future<List<dynamic>> getUserFinancialMovements(
+    String token) async {
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/user-financial-movements'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
 
-  // Antes: createMovimentoFinanceiro()
+    final Map<String, dynamic> body =
+        response.body.isNotEmpty
+            ? jsonDecode(response.body)
+            : {};
+
+    if (response.statusCode == 200) {
+      return body['data'] ?? [];
+    } else {
+      throw FinancialMovementsException(
+          'Error fetching user financial movements.');
+    }
+  } catch (_) {
+    throw FinancialMovementsException(
+        'Connection error with API.');
+  }
+}
+  
   Future<void> createFinancialMovement(
       Map<String, dynamic> body) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/movimentos-financeiros'),
+        Uri.parse('$baseUrl/financial-movements'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(body),
       );
@@ -64,7 +91,7 @@ class FinancialMovementsService {
       int id, Map<String, dynamic> body) async {
     try {
       final response = await http.put(
-        Uri.parse('$baseUrl/movimentos-financeiros/$id'),
+        Uri.parse('$baseUrl/financial-movements/$id'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(body),
       );
@@ -82,7 +109,7 @@ class FinancialMovementsService {
   Future<void> deleteFinancialMovement(int id) async {
     try {
       final response = await http.delete(
-          Uri.parse('$baseUrl/movimentos-financeiros/$id'));
+          Uri.parse('$baseUrl/financial-movements/$id'));
 
       if (response.statusCode != 200) {
         throw FinancialMovementsException(
