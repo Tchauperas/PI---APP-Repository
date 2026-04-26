@@ -5,8 +5,7 @@ import '../config/env.dart';
 
 class FinancialMovementsException implements Exception {
   final String message;
-
-  FinancialMovementsException(this.message);
+      FinancialMovementsException(this.message);
 
   @override
   String toString() => message;
@@ -18,11 +17,15 @@ class FinancialMovementsService {
   FinancialMovementsService({String? baseUrl})
       : baseUrl = baseUrl ?? Env.apiBaseUrl;
 
-  Future<List<dynamic>> getFinancialMovements() async {
+  Future<List<dynamic>> getFinancialMovements(String token) async {
     try {
-      final response = await http
-          .get(Uri.parse('$baseUrl/financial-movements'));
-
+      final response = await http.get(
+        Uri.parse('$baseUrl/financial-movements'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+      },
+  );
       final data = response.body.isNotEmpty
           ? jsonDecode(response.body)
           : [];
@@ -47,6 +50,7 @@ class FinancialMovementsService {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
+        
       },
     );
 
@@ -68,13 +72,17 @@ class FinancialMovementsService {
 }
   
   Future<void> createFinancialMovement(
-      Map<String, dynamic> body) async {
+    String token,
+    Map<String, dynamic> body) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/financial-movements'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+      },
         body: jsonEncode(body),
-      );
+    );
 
       if (response.statusCode != 200 &&
           response.statusCode != 201) {
@@ -88,13 +96,18 @@ class FinancialMovementsService {
   }
 
   Future<void> updateFinancialMovement(
-      int id, Map<String, dynamic> body) async {
+      String token,
+      int id,
+      Map<String, dynamic> body) async {
     try {
       final response = await http.put(
         Uri.parse('$baseUrl/financial-movements/$id'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+      },
         body: jsonEncode(body),
-      );
+    );
 
       if (response.statusCode != 200) {
         throw FinancialMovementsException(
@@ -106,10 +119,16 @@ class FinancialMovementsService {
     }
   }
 
-  Future<void> deleteFinancialMovement(int id) async {
+  Future<void> deleteFinancialMovement(
+      String token,
+      int id) async {
     try {
       final response = await http.delete(
-          Uri.parse('$baseUrl/financial-movements/$id'));
+        Uri.parse('$baseUrl/financial-movements/$id'),
+        headers: {
+          'Authorization': 'Bearer $token',
+       },
+    );
 
       if (response.statusCode != 200) {
         throw FinancialMovementsException(
