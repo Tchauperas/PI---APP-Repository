@@ -17,30 +17,33 @@ class FinancialMovementsService {
   FinancialMovementsService({String? baseUrl})
       : baseUrl = baseUrl ?? Env.apiBaseUrl;
 
-  Future<List<dynamic>> getFinancialMovements(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/financial-movements'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
+  Future<List<dynamic>> getFinancialMovements(
+    String token) async {
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/financial-movements'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
       },
-  );
-      final data = response.body.isNotEmpty
-          ? jsonDecode(response.body)
-          : [];
+    );
 
-      if (response.statusCode == 200) {
-        return data;
-      } else {
-        throw FinancialMovementsException(
-            'Error fetching financial movements.');
-      }
-    } catch (_) {
+    final Map<String, dynamic> body =
+        response.body.isNotEmpty
+            ? jsonDecode(response.body)
+            : {};
+
+    if (response.statusCode == 200) {
+      return body['data'] ?? [];
+    } else {
       throw FinancialMovementsException(
-          'Connection error with API.');
+          'Error fetching financial movements.');
     }
+  } catch (_) {
+    throw FinancialMovementsException(
+        'Connection error with API.');
   }
+}
   
   Future<List<dynamic>> getUserFinancialMovements(
     String token) async {
@@ -75,6 +78,29 @@ class FinancialMovementsService {
     String token,
     Map<String, dynamic> body) async {
     try {
+      final requiredFields = [
+        'type_movement_id',
+        'movement_date',
+        'due_date',
+        'payment_date',
+        'doc_num',
+        'transator_id',
+        'value',
+        'payment_method_id',
+        'situation_id',
+        'account_id',
+        'account_plan_id',
+        'reason',
+      ];
+
+      for (final field in requiredFields) {
+        if (!body.containsKey(field)) {
+          throw FinancialMovementsException(
+            'Missing required field: $field',
+          );
+        }
+      }
+
       final response = await http.post(
         Uri.parse('$baseUrl/financial-movements'),
         headers: {
@@ -89,6 +115,8 @@ class FinancialMovementsService {
         throw FinancialMovementsException(
             'Error creating financial movement.');
       }
+    } on FinancialMovementsException {
+      rethrow;
     } catch (_) {
       throw FinancialMovementsException(
           'Connection error with API.');
@@ -100,6 +128,7 @@ class FinancialMovementsService {
       int id,
       Map<String, dynamic> body) async {
     try {
+      
       final response = await http.put(
         Uri.parse('$baseUrl/financial-movements/$id'),
         headers: {
