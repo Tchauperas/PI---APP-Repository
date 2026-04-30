@@ -61,7 +61,85 @@ class TransactorsService {
       }
     } catch (_) {
       throw TransactorsException(
-        'Conecctions error with API');
+        'Connection error with API');
     }
       }
+
+    Future<void> createTransactor(
+      String token,
+      Map<String, dynamic> body,
+  ) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/transactors'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode != 200 &&
+          response.statusCode != 201) {
+        throw TransactorsException(
+          'Error creating transactor.',
+        );
+      }
+    } on TransactorsException {
+      rethrow;
+    } catch (_) {
+      throw TransactorsException(
+        'Connection error with API.',
+      );
+    }
   }
+    Future<void> updateTransactor(
+      String token,
+      int id,
+      Map<String, dynamic> body,
+    ) async {
+      try {
+        final response = await http.put(
+          Uri.parse('$baseUrl/transactors/$id'),
+          headers: {
+            'Content-Type' : 'application/json',
+            'Authorization' : 'Bearer $token',
+          },
+          body: jsonEncode(body),
+        );
+        if (response.statusCode !=200) {
+          throw TransactorsException(
+            'Error updating transactor.',
+          );
+        }
+      } catch (_) {
+        throw TransactorsException(
+          'Connection error with API.',
+        );
+      }
+    }
+      Future<void> deleteTransactor(
+    String token,
+    int id,
+  ) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/transactors/$id'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw TransactorsException(
+          'Error deleting transactor.',
+        );
+      }
+    } catch (_) {
+      throw TransactorsException(
+        'Connection error with API.',
+      );
+    }
+  }
+}
+      
